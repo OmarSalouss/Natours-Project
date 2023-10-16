@@ -33,8 +33,17 @@ exports.getAllTours = async (req, res) => {
             // Examdple: URI (/?sort=-price,-ratingsAverage) then become like this //! sort('-price -ratingsAverage')
             // price --> Ascending Order //! then if two price or more are equal make order based on ratingsAverage --> Ascending Order
         } else {
-            query = query.sort('-createdAt');
+            query = query.sort('-createdAt'); // Default Sort
         }
+
+        // 3) Field Limiting
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            query = query.select(fields);
+        } else {
+            query = query.select('-__v'); //select everything exclude (__v) because i put '-'
+        }
+
         //! EXECUTE QUERY
         const tours = await query;
 
