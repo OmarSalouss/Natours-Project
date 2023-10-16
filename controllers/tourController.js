@@ -5,13 +5,13 @@ const Tour = require('../models/tourModel');
 exports.getAllTours = async (req, res) => {
     try {
         //! BUILD QUERY
-        // 1) Filtering
+        // 1A) Filtering
         const queryObj = { ...req.query };
         const excludedFields = ['page', 'sort', 'limit', 'fields'];
         excludedFields.forEach(el => { delete queryObj[el] });
         console.log(req.query, queryObj);
 
-        // 2) Advanced Filtering
+        // 1B) Advanced Filtering
         let queryStr = JSON.stringify(queryObj);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
         console.log("***************");
@@ -19,8 +19,22 @@ exports.getAllTours = async (req, res) => {
         console.log(queryStr);
         console.log("***************");
 
-        const query = Tour.find(JSON.parse(queryStr));
+        let query = Tour.find(JSON.parse(queryStr));
 
+        // 2) Sorting
+        // sort=price  // Descending Order
+        // sort=-price // Ascending Order
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            console.log(sortBy);
+            query = query.sort(sortBy);
+            // Examdple: URI (/?sort=-price,ratingsAverage) then become like this //! sort('-price ratingsAverage')
+            // price --> Ascending Order //! then if two price or more are equal make order based on ratingsAverage --> Descending Order
+            // Examdple: URI (/?sort=-price,-ratingsAverage) then become like this //! sort('-price -ratingsAverage')
+            // price --> Ascending Order //! then if two price or more are equal make order based on ratingsAverage --> Ascending Order
+        } else {
+            query = query.sort('-createdAt');
+        }
         //! EXECUTE QUERY
         const tours = await query;
 
