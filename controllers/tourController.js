@@ -1,5 +1,13 @@
 const Tour = require('../models/tourModel');
 
+exports.aliasTopTours = async (req, res, next) => {
+    // ?sort=-ratingsAverage,price&limit=5
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage,price';
+    req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+}
+
 //! (req, res) => { } : this callback function will run inside in eventloop
 //! so here we can't have any block in code
 exports.getAllTours = async (req, res) => {
