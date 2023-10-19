@@ -1,5 +1,6 @@
 const mongose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 
 const tourSchema = new mongose.Schema(
     {
@@ -9,7 +10,8 @@ const tourSchema = new mongose.Schema(
             unique: true, // its technically not a validator
             trim: true,
             maxlength: [40, 'A tour name must have less or equal then 40 characters'], // its validator
-            minlength: [10, 'A tour name must have more or equal then 10 characters']  // its validator
+            minlength: [10, 'A tour name must have more or equal then 10 characters'], // its validator
+            // validate: [validator.isAlpha, 'Tour name must only contain character']
         },
         slug: String,
         duration: {
@@ -42,7 +44,17 @@ const tourSchema = new mongose.Schema(
             type: Number,
             required: [true, 'A tour must have a price']
         },
-        priceDiscount: Number,
+        priceDiscount: {
+            type: Number,
+            validate: {
+                validator: function (val) {
+                    // this only points to current doc on NEW docunebt creation //! So Don't work with Update
+                    return val < this.price; // 100 < 200 --> True,   250 < 200 --> False
+                },
+                message: 'Discount price ({VALUE}) should be below regular price'
+
+            }
+        },
         summary: {
             type: String,
             trim: true,
