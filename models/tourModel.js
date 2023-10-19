@@ -72,7 +72,7 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create() //! Not with .insertMany() | .find | .findAndUpdate | ...
 tourSchema.pre('save', function (next) {
-    this.slug = slugify(this.name, { lower: true });
+    this.slug = slugify(this.name, { lower: true }); // this is return to current document
     next();
 });
 
@@ -98,16 +98,17 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.post(/^find/, function (docs, next) {
     console.log("After  1.2")
     console.log(`Query took ${Date.now() - this.start} millesconds`);
-    console.log(docs);
+    // console.log(docs);
     next();
 });
 
-// tourSchema.pre('findOne', function (next) {
-//     console.log("******************************************************* 1.1")
-
-//     this.find({ secretTour: { $ne: true } });
-//     next();
-// })
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });// unshift to insert at begining of array
+    
+    console.log(this.pipeline()); // this is return to current aggregate object
+    next();
+});
 
 const Tour = mongose.model('Tour', tourSchema);
 
