@@ -7,19 +7,24 @@ const app = require('./app');
 const DB = process.env.DATABASE.replace('<password>', process.env.DATABASE_PASSWORD);
 
 mongose
-    .connect(DB, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true
-    }).then(() => {
-        console.log('DB connenction successful!');
-    });
+  .connect(DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true
+  }).then(() => {
+    console.log('DB connenction successful!')
+  });
 
 const port = process.env.PORT;
-app.listen(port, () => {
-    console.log(`App running on port ${port}`);
+const server = app.listen(port, () => {
+  console.log(`App running on port ${port}`);
 });
 
 
-// TEST
+process.on('unhandledRejection', err => {
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+})
