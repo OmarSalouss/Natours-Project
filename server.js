@@ -15,8 +15,6 @@ process.on('uncaughtException', err => {
   // EX: console.log(x); // x not define 
 });
 
-
-
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
