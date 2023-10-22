@@ -16,6 +16,8 @@ router
     .route('/')
     .get(tourController.getAllTours)
     .post(tourController.createTour);
+// .post(catchAsync(tourController.createTour)); // i can add catchAsync here but not recommended.
+// because maybe create wrong because put this with async functions only
 
 router
     .route('/:id')
