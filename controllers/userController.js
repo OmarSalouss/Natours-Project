@@ -1,15 +1,18 @@
-const fs = require('fs');
+const User = require('../models/userModel');
+const catchAsync = require('./../utils/catchAsync');
 
-const tours = JSON.parse(
-    fs.readFileSync(`./dev-data/data/tours-simple.json`)
-);
+exports.getAllUsers = catchAsync(async (req, res) => {
+    const users = await User.find();
 
-exports.getAllUsers = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defiend'
+    //! SEND RESPONSE
+    res.status(200).json({
+        status: "Success",
+        results: users.length,
+        data: {
+            tours: users
+        }
     });
-};
+});
 exports.createUser = (req, res) => {
     res.status(500).json({
         status: 'error',
