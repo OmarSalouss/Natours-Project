@@ -88,3 +88,23 @@ exports.restrictTo = (...roles) => {
     next();
   }
 };
+
+exports.forgetPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user bvased on POSTed email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('There is no user with email address.', 404));
+  }
+
+  // 2) Generate the eandom reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+
+  // 3) Send it to user's use email
+
+});
+
+exports.resetPassword = catchAsync((req, res, next) => {
+  // 1)
+});
