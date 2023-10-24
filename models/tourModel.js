@@ -109,14 +109,14 @@ tourSchema.pre('save', function (next) {
 // QUERY MIDDLEWARE
 tourSchema.pre(/^find/, function (next) {
     // tourSchema.pre('find', function (next) {
-    console.log("Bdfore 1.1")
+    // console.log("Bdfore 1.1")
     this.start = Date.now();
     this.find({ secretTour: { $ne: true } });
     next();
 });
 
 tourSchema.post(/^find/, function (docs, next) {
-    console.log("After  1.2")
+    // console.log("After  1.2")
     console.log(`Query took ${Date.now() - this.start} millesconds`);
     // console.log(docs);
     next();
