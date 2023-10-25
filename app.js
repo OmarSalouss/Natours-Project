@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -30,7 +32,19 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Body parser, reading date from body into req.body
-app.use(express.json({ limit: '10kb' }));// of body larger than 10KB, it basically not be accepted
+app.use(express.json({ limit: '10kb' }));// if body larger than 10KB, it basically not be accepted
+
+// Data Sanitization against NoSQL query injection
+app.use(mongoSanitize());//! So, what this middleware does? is to look at the request body, the request query string,
+//! and also at Request.Params, and then it will basically filter out all of the dollar signs and dots,
+//! because that's how MongoDB operators are written. By removing that, well, these operators are then no longer going to work.
+//! Ex: send email in body of Login API like this --> "email": {"$gt":""} . Then will Return All Documnets
+//! So this middleware will transfer email to email= {}
+
+// Data Sanitization against XSS
+app.use(xss());//! This will then clean any user input from malicious HTML code
+//! Ex: send name in body of SignUp API Like this --> "name": "<div id='bad-cod'>Name</div>"
+//! So this middleware will transfer name to "name": "&lt;div id='bad-cod'>Name&lt;/div>"
 
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
