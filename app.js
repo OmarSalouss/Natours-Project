@@ -4,6 +4,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -45,6 +46,23 @@ app.use(mongoSanitize());//! So, what this middleware does? is to look at the re
 app.use(xss());//! This will then clean any user input from malicious HTML code
 //! Ex: send name in body of SignUp API Like this --> "name": "<div id='bad-cod'>Name</div>"
 //! So this middleware will transfer name to "name": "&lt;div id='bad-cod'>Name&lt;/div>"
+
+// Prevent Parameter Pollution
+app.use(hpp());//! if user same params name more than one then will give err, so we use this middleware to take last one
+//! Ex: api/v1/tours?sort=price&sort=duration 
+//! then will take only sort=duration and create sort based on duration
+// app.use(
+//     hpp({
+//         whitelist: [
+//             'duration',
+//             'ratingsAverage',
+//             'ratingsQuantity',
+//             'maxGroupSize',
+//             'difficulty',
+//             'price'
+//         ]
+//     })
+// );
 
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
