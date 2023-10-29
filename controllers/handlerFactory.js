@@ -14,3 +14,22 @@ exports.deleteOne = Model =>
             data: null
         });
     });
+
+exports.updateOne = Model =>
+    catchAsync(async (req, res, next) => {
+        const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!doc) {
+            return next(new AppError('No tour found with that ID', 404));
+        }
+        const name = `${Model}s`;
+        res.status(200).json({
+            status: "Success",
+            data: {
+                data: doc
+            }
+        });
+    });

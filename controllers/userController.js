@@ -74,4 +74,7 @@ exports.updateUser = (req, res) => {
         message: 'This route is not yet defiend'
     });
 };
+
+// Do not update password with this
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
