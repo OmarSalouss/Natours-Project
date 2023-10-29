@@ -6,25 +6,19 @@ const router = express.Router();
 
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
-
 router.post('/forgetPassword', authController.forgetPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
-router.patch(
-    '/updateMyPassword',
-    authController.protect,
-    authController.updatePassword
-);
+// Protect all routes after this middleware
+router.use(authController.protect);
 
-router.get(
-    '/me',
-    authController.protect,
-    userController.getMe,
-    userController.getUser
-);
+router.patch('/updateMyPassword', authController.updatePassword);
+router.get('/me', userController.getMe, userController.getUser);
+router.patch('/updateMe', userController.updateMe);
+router.delete('/deleteMe', userController.deleteMe);
 
-router.patch('/updateMe', authController.protect, userController.updateMe);
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+// Onlu admin Can Access all below routes and others Not Allow
+router.use(authController.restrictTo('admin'));
 
 router
     .route('/')
