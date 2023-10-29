@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('./../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowFields) => {
     const newObj = {};
@@ -73,9 +74,4 @@ exports.updateUser = (req, res) => {
         message: 'This route is not yet defiend'
     });
 };
-exports.deleteUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defiend'
-    });
-};
+exports.deleteUser = factory.deleteOne(User);
