@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -14,7 +15,14 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
+app.set('view engine', 'pug'); // pug templates called views in Express
+app.set('views', path.join(__dirname, 'views'));// path.join() : create a correct path
+
 // 1) GLOBAL MIDDLEWARE
+// Serving static files
+// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Set Secuirity HTTP headers
 app.use(helmet());
 
@@ -65,8 +73,7 @@ app.use(hpp());//! if user same params name more than one then will give err, so
 //     })
 // );
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
+
 
 // Test middleware
 app.use((req, res, next) => {
@@ -75,6 +82,10 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
+app.get('/', (req, res) => {
+    res.status(200).render('base');
+});
+
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
