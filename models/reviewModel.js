@@ -34,6 +34,8 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
   // this.populate({
   //     path: 'tour',
@@ -90,7 +92,6 @@ reviewSchema.pre(/^findOneAnd/, async function (next) { // next: because it's pr
   //! the goal is to to get access to the current review document
   // this: points to current Schema not to the current review document
   this.r = await this.findOne(); // To get access to the current review document, we will wait Execution of query
-  console.log(this.r);
 });
 
 reviewSchema.post(/^findOneAnd/, async function (next) {
