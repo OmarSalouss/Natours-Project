@@ -97,12 +97,12 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
 });
 
 
-// /tours-within/:distance/center/:lating/unit/:unit
+// /tours-within/:distance/center/:latlng/unit/:unit
 // /tours-within/233/center/32.221689,35.269293/unit/mi
 
 exports.getToursWithin = catchAsync(async (req, res, next) => {
-  const { distance, lating, unit } = req.params;
-  const [lat, lng] = lating.split(',');
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
 
   const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
 
@@ -127,4 +127,53 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     }
   });
 
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitutr and longitude in the pormat lat,lng.',
+        400
+      ));
+  }
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1]
+        },
+        distanceField: 'distance', // name of the field that will be created and where all the calculated distances will be stored.
+        distanceMultiplier: multiplier
+      }
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1
+      }
+    }
+  ]);
+  /**
+   * $geoNear :  very important to note about geoNear is that it requires that 
+   * at least one of our fields contains a geospatial index.
+   * Actually we already did that before, Our start location already has
+   * this 2dsphere geospatial index on it. 
+   * 
+   */
+
+  res.status(200).json({
+    message: "Success",
+    length: distances.length,
+    data: {
+      tour: distances
+    }
+  })
 });

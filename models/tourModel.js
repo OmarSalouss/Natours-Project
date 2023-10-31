@@ -182,12 +182,12 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 // AGGREGATION MIDDLEWARE
-tourSchema.pre('aggregate', function (next) {
-    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });// unshift to insert at begining of array
+// tourSchema.pre('aggregate', function (next) {
+//     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });// unshift to insert at begining of array
 
-    console.log(this.pipeline()); // this is return to current aggregate object
-    next();
-});
+//     console.log(this.pipeline()); // this is return to current aggregate object
+//     next();
+// });
 
 const Tour = mongose.model('Tour', tourSchema);
 

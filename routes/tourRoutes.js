@@ -28,10 +28,15 @@ router
         tourController.createTour);
 
 router
-    .route('/tours-within/:distance/center/:lating/unit/:unit')
+    .route('/tours-within/:distance/center/:latlng/unit/:unit')
     .get(tourController.getToursWithin);
 // /tours-within?distance=233&center=-40,45&unit=mi
 // /tours-within/233/center/-40,45/unit/mi
+
+router // To calculate the distance from a certain point to all tours we have in our collection
+    .route('/distances/:latlng/unit/:unit')
+    .get(tourController.getDistances)
+
 router
     .route('/:id')
     .get(tourController.getTour)
