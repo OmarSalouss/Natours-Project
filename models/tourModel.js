@@ -121,6 +121,8 @@ const tourSchema = new mongose.Schema(
 // tourSchema.index({ price: 1 });
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' }); // So for geospatial data, this index needs to be a 2D sphere index 
+// if the data describes real points on the Earth like sphere.
 
 tourSchema.virtual('durationWeeks').get(function () {
     return this.duration / 7;
