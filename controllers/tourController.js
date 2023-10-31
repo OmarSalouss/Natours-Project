@@ -95,3 +95,36 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+
+// /tours-within/:distance/center/:lating/unit/:unit
+// /tours-within/233/center/32.221689,35.269293/unit/mi
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, lating, unit } = req.params;
+  const [lat, lng] = lating.split(',');
+
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitutr and longitude in the pormat lat,lng.',
+        400
+      ));
+  }
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
+  });
+  console.log(distance, lat, lng, unit, radius)
+
+  res.status(200).json({
+    message: "Success",
+    results: tours.length,
+    data: {
+      tour: tours
+    }
+  });
+
+});
