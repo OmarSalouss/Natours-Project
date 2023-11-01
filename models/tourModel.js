@@ -178,6 +178,7 @@ tourSchema.pre(/^find/, function (next) {
         path: 'guides',
         select: '-__v -passwordChangedAt'
     });
+    console.log(11111111111111111111111111);
     next();
 });
 
