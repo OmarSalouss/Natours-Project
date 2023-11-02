@@ -30,13 +30,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 //     }
 // }));
 console.log(111111111)
+console.log(process.env.NODE_ENV)
 // Set Secuirity HTTP headers
 // app.use(helmet());
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: ["'self'", 'data:', 'https://www.google-analytics.com'],
-            connectSrc: ["'self'", 'ws://127.0.0.1:11256'], // Set the connect-src directive
+            connectSrc: ["'self'", 'ws://127.0.0.1:11256', 'ws://127.0.0.1:13504'],
+            scriptSrc: ["'self'", 'unsafe-inline', 'https://www.google-analytics.com', 'https://api.mapbox.com'],
             // Add other directives as needed
         },
     })
