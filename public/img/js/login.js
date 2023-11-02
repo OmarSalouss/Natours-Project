@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { showAlert } from './alerts';
 
 export const login = async (email, password) => {
- try {
+  try {
     const res = await axios({
       method: 'POST',
       url: 'http://127.0.0.1:3000/api/v1/users/login',
@@ -11,7 +12,7 @@ export const login = async (email, password) => {
       }
     });
     if (res.data.status === "Success") {
-      alert('Log in Successfully!');
+      showAlert('success', 'Log in Successfully!');
       window.setTimeout(() => {
         location.assign('/');
       }, 1500);
@@ -19,8 +20,7 @@ export const login = async (email, password) => {
     console.log("res");
     console.log(res);
   } catch (error) {
-    alert(error.response.data.message);
-
+    showAlert('error', error.response.data.message);
   }
 };
 
