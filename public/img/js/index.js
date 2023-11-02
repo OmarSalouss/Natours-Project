@@ -2,13 +2,21 @@ import '@babel/polyfill'
 import { displayMap } from './mapbox';
 import { login } from './login';
 
-const locations = JSON.parse(document.getElementById('map').dataset.locations);
+// DOM ELEMENTS
+const mapbox = document.getElementById('map');
+const loginForm = document.querySelector('.form');
 
-displayMap(locations);
+// DELEGATION
+if (mapbox) {
+    console.log("Not Null mapbox")
+    const locations = JSON.parse(mapbox.dataset.locations);
+    displayMap(locations);
+}
 
-document.querySelector('.form').addEventListener('submit', e => {
-    e.preventDefault();// this prevents the form from la-loading any other page.
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    login(email, password);
-});
+if (loginForm)
+    loginForm.addEventListener('submit', e => {
+        e.preventDefault();// this prevents the form from la-loading any other page.
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        login(email, password);
+    });

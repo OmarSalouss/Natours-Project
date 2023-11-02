@@ -24,9 +24,23 @@ app.set('views', path.join(__dirname, 'views'));// path.join() : create a correc
 // Serving static files
 // app.use(express.static(`${__dirname}/public`));
 app.use(express.static(path.join(__dirname, 'public')));
-
+// app.use(express.static('./', {
+//     setHeaders: function (res) {
+//         res.set("Content-Security-Policy", "default-src 'self'");
+//     }
+// }));
+console.log(111111111)
 // Set Secuirity HTTP headers
-app.use(helmet());
+// app.use(helmet());
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'self'", 'data:', 'https://www.google-analytics.com'],
+            connectSrc: ["'self'", 'ws://127.0.0.1:11256'], // Set the connect-src directive
+            // Add other directives as needed
+        },
+    })
+);
 
 // Development Logging
 if (process.env.NODE_ENV === 'development') {
