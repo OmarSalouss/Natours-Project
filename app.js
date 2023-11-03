@@ -61,6 +61,10 @@ app.use('/api', limiter);
 
 // Body parser, parses (reading) data from body into req.body
 app.use(express.json({ limit: '10kb' }));// if body larger than 10KB, it basically not be accepted
+app.use(express.urlencoded({
+    extended: true, //! allow us to pass some more complex data
+    limit: '10kb'
+})); //! parse data coming from a URL encoded FORM.
 app.use(cookieParser());// parses data from cookies
 
 // Data Sanitization against NoSQL query injection
